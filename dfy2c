@@ -1,0 +1,20 @@
+#!/bin/sh
+
+REQUIRED_HEADERS_AND_TYPEDEFS="#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
+
+typedef string char*;
+typedef nat uint64_t;
+
+"
+
+sed "/^ \+\(requires\|invariant\|decreases\|ensures\)/d;
+    s/^ \+var//g;
+    s/^\(method\|function\|predicate\) //;
+    s/^\(\w\+(.\+)\) returns (\w\+:\(\w\+\))/\2 \1/;
+    s/:=/=/g;
+    s/\(\w\+\): \(\w\+\)/\2 \1/g;
+    s/|\(\w\+\)|/strlen(\1)/g" \
+        | echo "$REQUIRED_HEADERS_AND_TYPEDEFS$(cat -)"
